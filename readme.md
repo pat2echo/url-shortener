@@ -39,10 +39,12 @@ Cover all functionality with tests.
 
 #### Out of Scope
 - Endpoint security, User authentication/authorization
+- URL scanning for malicious content
 - Analytics dashboard
 - Custom domain support
 - User management
 - Rate limiting
+- Alerts for error rates and response times
 - Code style checker enforcement is ignored
 
 #### Security Considerations
@@ -78,8 +80,18 @@ Cover all functionality with tests.
 - System must encode long URLs to short URLs
 - System must decode short URLs back to original URLs
 - Short URLs must be unique
-- Duplicate original URLs should return the same short URL
 - Both endpoints must return JSON responses
+- HTTP status codes for errors
+- Feature flag: Duplicate original URLs should return the same short URL
+- Feature flag: Validate URL format/pattern
+- Feature flag: Validate existence of URL
+- Feature flag: Limit length of URL
+
+#### Evaluation Metrics
+- Feature flag: Enable Logging
+- Feature flag: Log daily usage
+- Feature flag: Log duplicate urls
+- Feature flag: Log slow url encoding/decoding process
 
 #### Non-Functional Requirements
 - Fast response time (<100ms)
@@ -88,23 +100,174 @@ Cover all functionality with tests.
 - Simple API structure
 - Comprehensive error handling
 
-#### Technical Requirements
-- 
 
-- Requirements Analysis & Implementation Approach
-- Design & deliverables
-- Postman endpoints
-- PHPunit tests
-- Read me instructions
-- Deployment guide
-- Deploy test version -- d1kit.com
-- Run instructions
-- Docker-compose
-- Web server config
+## Analysis & Implementation Approach
+### Core Approach
+- Hash-based Systems
+- Counter-based Systems
+- Base64 Encoding
 
-## Analysis
+### Design Considerations
+
+1. **Collision Avoidance**
+   - Use sufficiently long shortened strings (6-8 characters minimum)
+   - Implement collision detection and resolution strategies
+
+2. **Security Considerations**
+   - Avoid sequential IDs that are easily guessable
+   - Use cryptographic techniques to prevent URL enumeration
+
+3. **Performance Optimization**
+   - Use distributed ID generation (e.g., Twitter's Snowflake algorithm)
+   - Implement efficient database indexing
+
+4. **Analytics Integration**
+   - Store metadata with each URL for tracking
+   - Implement efficient click analytics
+
 
 ## Design
+- Use base64 encoding (a-z, A-Z, 0-9) for short codes
+- Generate Incremental serial number for each hour of the day
+- Test for existing serial number
+- Generate 6-character codes
+- Test for existing 6-character code
+- **is flag enabled?** Hash original URLs to quickly check for duplicates
+- Store url
+- **is flag enabled?** Write log
+
+
+### Data Structure
+```
+- urls
+  - id (primary key)
+  - original_url (string, indexed)
+  - short_code (string, unique, indexed)
+  - created_at (timestamp)
+  - expires_at (timestamp, nullable)
+```
+
+### Algorithm
+- Use base62 encoding (a-z, A-Z, 0-9) for short codes
+- Generate 6-character codes for ~56 billion unique combinations
+- Hash original URLs to quickly check for duplicates
+
+### Deliverables
+- Action Plan
+- Laravel application codebase
+- API documentation
+- Docker configuration
+- Test suite
+- Deployment guide
+- README with instructions
+
+### Encode URL Endpoint
+- **Endpoint:** `POST /api/encode`
+- **Content-Type:** `application/json`
+- **Request Body:**
+  ```json
+  {
+      "url": "https://d1kit.com/url-shortener/long/path"
+  }
+  ```
+- **Success Response:**
+  ```json
+  {
+      "original_url": "https://d1kit.com/url-shortener/long/path",
+      "short_url": "http://short.est/AbC123"
+  }
+  ```
+- **Error Response:**
+  ```json
+  {
+      "error": "Invalid URL format"
+  }
+  ```
+
+### Decode URL Endpoint
+- **Endpoint:** `POST /api/decode`
+- **Content-Type:** `application/json`
+- **Request Body:**
+  ```json
+  {
+      "url": "http://short.est/AbC123"
+  }
+  ```
+- **Success Response:**
+  ```json
+  {
+      "short_url": "http://short.est/AbC123",
+      "original_url": "https://d1kit.com/url-shortener/long/path"
+  }
+  ```
+- **Error Response:**
+  ```json
+  {
+      "error": "Short URL not found"
+  }
+  ```
+
+### Postman Collection
+
+```json
+{
+  "info": {
+    "name": "URL Shortener API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Encode URL",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"url\": \"https://www.thisisalongdomain.com/with/some/parameters?and=here_too\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/encode",
+          "host": ["{{base_url}}"],
+          "path": ["encode"]
+        }
+      }
+    },
+    {
+      "name": "Decode URL",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"url\": \"http://short.est/GeAi9K\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/decode",
+          "host": ["{{base_url}}"],
+          "path": ["decode"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api"
+    }
+  ]
+}
+```
+
 
 ## Implement
 
