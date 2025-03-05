@@ -284,3 +284,8 @@ Cover all functionality with tests.
 ## Regression Test
 
 ## Release & Operations Manual
+
+
+curl -X POST http://localhost/api/v1/encode      -H "Content-Type: application/json"      -d '{"url":"https://example.com/long/pathogyd"}'
+
+curl -X POST http://localhost/api/v1/decode      -H "Content-Type: application/json"      -d '{"url":"http://short.est/4EIq1Q"}'
