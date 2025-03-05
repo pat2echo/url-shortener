@@ -3,13 +3,8 @@
 namespace Tests\Unit\Services;
 
 use App\Services\UrlShortenerService;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
-use Carbon\Carbon;
 use Tests\TestCase;
-use Mockery;
-use Exception;
 
 class UrlShortenerServiceTest extends TestCase
 {
