@@ -113,23 +113,25 @@ class UrlShortenerService
 
     public function decodeUrl($shortUrl)
     {
-        $shortCode = str_replace($this->config['short_url_base'], '', $shortUrl);
-        $mappings = $this->getMappings();
-
-        $originalUrl = $mappings[$shortCode] ?? null;
-
-        if (!$originalUrl) {
-            return null;
+        // Validate decoded URL if enabled
+        if ($this->config['features']['url_decode_validation']) {
+            $isValidURL = $this->validateUrl($shortUrl, 'decode');
+        }else{
+            $isValidURL = ['status' => True];
         }
 
-        // Validate decoded URL if enabled
-        if ($this->config['features']['url_decode_validation'] && 
-            !$this->validateUrl($originalUrl)) {
-            return null;
+        $originalUrl = null;
+
+        if ( isset($isValidURL['status']) && $isValidURL['status'] ){
+            $shortCode = str_replace($this->config['short_url_base'], '', $shortUrl);
+            $shortCodeData = $this->getURLFromShortCode( str_replace('/', '', $shortCode) );
+            if( isset($shortCodeData['url']) ){
+                $originalUrl = $shortCodeData['url'];
+            }
         }
 
         // Log decoding
-        $this->logDecoding($shortUrl, $originalUrl);
+        //$this->logDecoding($shortUrl, $originalUrl);
 
         return [
             'short_url' => $shortUrl,
@@ -188,6 +190,17 @@ class UrlShortenerService
         unset($mappings['url']);
 
         $this->storeMapping([ $this->getMappingURL($originalUrl) => $mappings ], 0);
+    }
+
+    protected function getURLFromShortCode($shortCode)
+    {
+        $mappings = [];
+
+        $file = storage_path('app/'.md5( $shortCode ).'.json');
+        if ( file_exists($file)) {
+            $mappings = json_decode( file_get_contents($file), 1 );
+        }
+        return $mappings;
     }
 
     protected function storeMapping($mappings = [], $overwrite = 1)

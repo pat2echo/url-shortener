@@ -29,7 +29,7 @@ class UrlShortenerServiceTest extends TestCase
                 'supported_url_protocols' => ['http://', 'https://'],
                 'is_url_reachable' => true,
                 'url_max_length' => 2000,
-                'duplicate_check_expiry_time_in_seconds' => 3600,
+                'duplicate_check_expiry_time_in_seconds' => 30,
                 'logging' => true,
                 'log_slow_process' => true,
                 'slow_process_time_in_seconds' => 1
@@ -138,7 +138,6 @@ class UrlShortenerServiceTest extends TestCase
     }
 
     /** @test */
-    /*
     public function it_decodes_url_successfully()
     {
         $originalUrl = 'http://example.com';
@@ -149,13 +148,12 @@ class UrlShortenerServiceTest extends TestCase
         $this->assertEquals($originalUrl, $decodedResult['original_url']);
         $this->assertEquals($encodedResult['short_url'], $decodedResult['short_url']);
     }
-    */
 
     /** @test */
     public function it_returns_null_for_non_existent_short_url()
     {
         $result = $this->service->decodeUrl('http://short.url/nonexistent');
-        $this->assertNull($result);
+        $this->assertNull($result['original_url']);
     }
 
     /** @test */
