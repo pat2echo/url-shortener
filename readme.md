@@ -272,6 +272,10 @@ Cover all functionality with tests.
 ## Implement
 
 ## Deploy
+- environmemt linux
+- install docker and docker compose
+- navigate to docker directory
+- start service
 
 ## Document
 
