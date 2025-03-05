@@ -7,7 +7,6 @@ services:
       - "80:80"
     volumes:
       #- ./vanilla-app:/var/www/html
-      - ./laravel-app:/var/www
-      - ./laravel-app/public:/var/www/html
+      - ./laravel-app:/var/www/html
     command: >
       bash -c "apache2-foreground"

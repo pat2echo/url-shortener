@@ -84,7 +84,7 @@ Cover all functionality with tests.
 - HTTP status codes for errors
 - Feature flag: Duplicate original URLs should return the same short URL
 - Feature flag: Validate URL format/pattern
-- Feature flag: Validate existence of URL
+- Feature flag: Validate existence of URL (ping url to ensure its reachable before encoding)
 - Feature flag: Limit length of URL
 
 #### Evaluation Metrics
@@ -127,8 +127,10 @@ Cover all functionality with tests.
 
 
 ## Design
-- Use base64 encoding (a-z, A-Z, 0-9) for short codes
 - Generate Incremental serial number for each hour of the day
+-- create dedicated index (local storage file) for each month, e.g Yn
+-- get current date: Yn and check index if it exists
+- Use base64 encoding (a-z, A-Z, 0-9) for short codes
 - Test for existing serial number
 - Generate 6-character codes
 - Test for existing 6-character code
