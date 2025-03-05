@@ -13,10 +13,10 @@ class UrlShortenerService
     protected $config;
     protected $currentTime;
 
-    public function __construct()
+    public function __construct($config = null)
     {
+        $this->config = $config ?? config('url_shortener');
         $this->storageFile = storage_path('app/url_mappings.json');
-        $this->config = config('url_shortener');
         $this->currentTime = Carbon::now()->format('U');
     }
 
@@ -30,8 +30,8 @@ class UrlShortenerService
         }
 
         // URL format validation
-        if ($this->config['features']['url_encode_validation'] || 
-            $this->config['features']['url_decode_validation']) {
+        if ( ($this->config['features']['url_encode_validation'] && $action == 'encode' ) || 
+            ( $this->config['features']['url_decode_validation'] && $action == 'decode' ) ) {
             
             // Basic URL validation
             if (!filter_var($url, FILTER_VALIDATE_URL)) {
@@ -90,7 +90,10 @@ class UrlShortenerService
         // Check for existing mapping
         $existingMapping = $this->findExistingMapping($originalUrl);
         if ($existingMapping) {
-            return $existingMapping;
+            return [
+                'original_url' => $originalUrl,
+                'short_url' => $this->config['short_url_base'] . $existingMapping
+            ];
         }
 
         // Generate unique short code
