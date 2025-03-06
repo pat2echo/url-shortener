@@ -31,7 +31,7 @@ Cover all functionality with tests.
 - PHPUnit to run local unit test cases  
 
 ## [Implementation Work Plan](./work-plan.md)
-This highlights my thought process and considerations, its very important and I urge you to take a look.
+- [This highlights my thought process and considerations, its very important and I urge you to take a look.](./work-plan.md)
 
 ## Key Functionality Code Artefacts
 - laravel-app/app/services/UrlShortenerService.php: core program logic
