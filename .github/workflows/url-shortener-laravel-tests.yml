@@ -11,28 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v3
+    
     - uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
         extensions: mbstring, dom, fileinfo, zip
         coverage: xdebug
 
-    - uses: actions/checkout@v3
-    
-    - name: Navigate to app dir
-      run: cd ./laravel-app
-      
+    - name: Navigate to laravel-app dir
+      run: cd laravel-app
+
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.simple-example', '.env');"
+      working-directory: laravel-app
 
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      working-directory: laravel-app
 
     - name: Generate key
       run: php artisan key:generate
+      working-directory: laravel-app
 
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
+      working-directory: laravel-app
 
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       run: vendor/bin/phpunit
+      working-directory: laravel-app
