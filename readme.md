@@ -34,8 +34,7 @@ Cover all functionality with tests.
 - Use of disk caching for persistence with lifespan of 30 days
 - Basic validation and error handling
 - Documentation and testing
-- Publicily accessible endpoints for demonstration
-- Use of github actions to run test cases (tentative)
+- Use of github actions to run phpunit test cases (tentative)
 
 #### Out of Scope
 - Endpoint security, User authentication/authorization
@@ -46,6 +45,7 @@ Cover all functionality with tests.
 - Rate limiting
 - Alerts for error rates and response times
 - Code style checker enforcement is ignored
+- Publicily accessible endpoints for demonstration
 
 #### Security Considerations
 - Input validation to prevent injection
@@ -209,69 +209,6 @@ Cover all functionality with tests.
   }
   ```
 
-### Postman Collection
-
-```json
-{
-  "info": {
-    "name": "URL Shortener API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Encode URL",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"url\": \"https://www.thisisalongdomain.com/with/some/parameters?and=here_too\"\n}"
-        },
-        "url": {
-          "raw": "{{base_url}}/encode",
-          "host": ["{{base_url}}"],
-          "path": ["encode"]
-        }
-      }
-    },
-    {
-      "name": "Decode URL",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"url\": \"http://short.est/GeAi9K\"\n}"
-        },
-        "url": {
-          "raw": "{{base_url}}/decode",
-          "host": ["{{base_url}}"],
-          "path": ["decode"]
-        }
-      }
-    }
-  ],
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:8000/api"
-    }
-  ]
-}
-```
-
-
-## Implement
 
 ## Deploy
 - environmemt linux
@@ -285,7 +222,3 @@ Cover all functionality with tests.
 
 ## Release & Operations Manual
 
-
-curl -X POST http://localhost/api/v1/encode      -H "Content-Type: application/json"      -d '{"url":"https://example.com/long/pathogyd"}'
-
-curl -X POST http://localhost/api/v1/decode      -H "Content-Type: application/json"      -d '{"url":"http://short.est/4EIq1Q"}'

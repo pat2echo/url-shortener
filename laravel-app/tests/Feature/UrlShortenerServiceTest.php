@@ -5,6 +5,7 @@ namespace Tests\Unit\Services;
 use App\Services\UrlShortenerService;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class UrlShortenerServiceTest extends TestCase
 {
@@ -35,7 +36,7 @@ class UrlShortenerServiceTest extends TestCase
         $this->service = new UrlShortenerService($this->testConfig);
     }
     
-    /** @test */
+    #[Test]
     public function it_handles_urls_without_protocol()
     {
         $result = $this->service->validateUrl('example.com', 'encode');
@@ -46,22 +47,21 @@ class UrlShortenerServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_url_with_valid_http_url()
     {
         $result = $this->service->validateUrl('http://example.com', 'encode');
         $this->assertTrue($result['status']);
     }
 
-
-    /** @test */
+    #[Test]
     public function it_validates_url_with_https_url()
     {
         $result = $this->service->validateUrl('https://example.com');
         $this->assertTrue($result['status']);
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_url_validation_with_invalid_url_format()
     {
         $result = $this->service->validateUrl('not a valid url');
@@ -69,7 +69,7 @@ class UrlShortenerServiceTest extends TestCase
         $this->assertEquals('Invalid URL format', $result['msg']);
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_url_validation_with_unsupported_protocol()
     {
         $result = $this->service->validateUrl('ftp://example.com');
@@ -77,7 +77,7 @@ class UrlShortenerServiceTest extends TestCase
         $this->assertStringContainsString('Invalid URL protocol', $result['msg']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_url_reachability()
     {
         Http::fake([
@@ -88,7 +88,7 @@ class UrlShortenerServiceTest extends TestCase
         $this->assertTrue($result['status']);
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_url_validation_for_unreachable_url()
     {
         Http::fake([
@@ -100,7 +100,7 @@ class UrlShortenerServiceTest extends TestCase
         $this->assertEquals('URL is unreachable (01)', $result['msg']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_url_length()
     {
         $longUrl = 'http://example.com/?' . str_repeat('a', intval($this->testConfig['features']['url_max_length']) + 1 );
@@ -109,7 +109,7 @@ class UrlShortenerServiceTest extends TestCase
         $this->assertStringContainsString('URL exceeds the maximum supported length', $result['msg']);
     }
 
-    /** @test */
+    #[Test]
     public function it_encodes_url_and_generates_unique_short_code()
     {
         $originalUrl = 'http://example.com';
@@ -122,7 +122,7 @@ class UrlShortenerServiceTest extends TestCase
         $this->assertEquals(6, strlen(str_replace('http://short.url/', '', $result['short_url'])));
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_existing_short_code_for_duplicate_url()
     {
         $originalUrl = 'http://example.com';
@@ -132,7 +132,7 @@ class UrlShortenerServiceTest extends TestCase
         $this->assertEquals($firstResult['short_url'], $secondResult['short_url']);
     }
 
-    /** @test */
+    #[Test]
     public function it_decodes_url_successfully()
     {
         $originalUrl = 'http://example.com';
@@ -144,40 +144,14 @@ class UrlShortenerServiceTest extends TestCase
         $this->assertEquals($encodedResult['short_url'], $decodedResult['short_url']);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_null_for_non_existent_short_url()
     {
         $result = $this->service->decodeUrl('http://short.url/nonexistent');
         $this->assertNull($result['original_url']);
     }
 
-    /** @test */
-    /*
-    public function it_logs_url_encoding_and_decoding()
-    {
-        Log::shouldReceive('info')
-            ->with('URL Encoded', Mockery::on(function($arg) {
-                return isset($arg['original_url']) && 
-                    isset($arg['short_code']) && 
-                    isset($arg['timestamp']);
-            }))
-            ->once();
-
-        Log::shouldReceive('info')
-            ->with('URL Decoded', Mockery::on(function($arg) {
-                return isset($arg['short_url']) && 
-                    isset($arg['original_url']) && 
-                    isset($arg['timestamp']);
-            }))
-            ->once();
-
-        $originalUrl = 'http://example.com';
-        $encodedResult = $this->service->encodeUrl($originalUrl);
-        $this->service->decodeUrl($encodedResult['short_url']);
-    }
-    */
-
-    /** @test */
+    #[Test]
     public function it_base62_encodes_data_correctly()
     {
         $reflection = new \ReflectionClass(UrlShortenerService::class);
@@ -190,5 +164,4 @@ class UrlShortenerServiceTest extends TestCase
         $this->assertIsString($encoded);
         $this->assertNotEmpty($encoded);
     }
-
 }

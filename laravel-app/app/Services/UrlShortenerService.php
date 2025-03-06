@@ -114,11 +114,12 @@ class UrlShortenerService
     public function decodeUrl($shortUrl)
     {
         // Validate decoded URL if enabled
-        if ($this->config['features']['url_decode_validation']) {
+        /*if ($this->config['features']['url_decode_validation']) {
             $isValidURL = $this->validateUrl($shortUrl, 'decode');
         }else{
             $isValidURL = ['status' => True];
-        }
+        }*/
+        $isValidURL = ['status' => True];
 
         $originalUrl = null;
 
@@ -131,7 +132,7 @@ class UrlShortenerService
         }
 
         // Log decoding
-        //$this->logDecoding($shortUrl, $originalUrl);
+        $this->logDecoding($originalUrl, $shortUrl);
 
         return [
             'short_url' => $shortUrl,
@@ -148,7 +149,7 @@ class UrlShortenerService
         while ( $file == null || ( $file && file_exists($file) ) || strlen($shortCode) !== 6) {
             // Generate a random binary string of the desired length
             $randomBytes = random_bytes(4);
-            // Convert serial number to base64 encoding
+            // Convert serial number to base62 encoding
             $shortCode = $this->base62_encode($randomBytes);
             $file = storage_path('app/'.md5( $shortCode ).'.json');
         }
@@ -278,7 +279,7 @@ class UrlShortenerService
         }
     }
 
-    protected function logDecoding($shortUrl, $originalUrl)
+    protected function logDecoding($originalUrl, $shortUrl)
     {
         if ($this->config['features']['logging']) {
             $startTime = microtime(true);
@@ -292,7 +293,7 @@ class UrlShortenerService
             // Log slow process if enabled
             if ($this->config['features']['log_slow_process']) {
                 $processingTime = microtime(true) - $startTime;
-                if ($processingTime > $this->config['slow_process_time_in_seconds']) {
+                if ($processingTime > $this->config['features']['slow_process_time_in_seconds']) {
                     Log::warning('Slow URL Decoding Process', [
                         'processing_time' => $processingTime,
                         'short_url' => $shortUrl
