@@ -18,7 +18,10 @@ jobs:
         coverage: xdebug
 
     - uses: actions/checkout@v3
-
+    
+    - name: Navigate to app dir
+      run: cd ./laravel-app
+      
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.simple-example', '.env');"
 
