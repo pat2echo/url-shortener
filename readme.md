@@ -26,14 +26,14 @@ Cover all functionality with tests.
 ## [Deliverable](./docs/readme.md)
 **Key Resources**
 - Operation Manual for Deployment
-- Postman Collection for Integration Tests
+- [Postman Collection for Integration Tests](https://www.postman.com/restless-sunset-44843/workspace/url-shortener/collection/31925882-d7636ed2-4143-43e3-bc20-65f846b47d47?action=share&creator=31925882)
 - Github Action Workflows for automatic running of Continuous Integration (CI) Unit Test Cases
 - PHPUnit to run local unit test cases  
 
 ## [Implementation Work Plan](./work-plan.md)
 This highlights my thought process and considerations, its very important and I urge you to take a look.
 
-## [Key Functionality Code Artefacts]
+## Key Functionality Code Artefacts
 - laravel-app/app/services/UrlShortenerService.php: core program logic
 - laravel-app/app/HTTP/Controllers/UrlShortenerController.php
 - laravel-app/config/url_shortener.php: contains settings / feature flags
