@@ -21,6 +21,7 @@
 - Git
 - Composer
 - PHP Zip extension
+- Compatible version of PHPUnit >= 11 
 
 ## Initializing the Laravel App
 
